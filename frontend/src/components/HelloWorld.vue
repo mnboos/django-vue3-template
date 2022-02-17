@@ -1,12 +1,32 @@
 <script setup lang="ts">
-defineProps<{
+import { ref } from "vue";
+import { useCounterStore } from "@/stores/counter";
+
+const props =  defineProps<{
   msg: string;
 }>();
+
+const bla = ref(props.msg)
+
+const store = useCounterStore();
+
+function increase() {
+  store.increment();
+}
+
+function getusers() {
+  store.getUsers();
+}
 </script>
 
 <template>
   <div class="greetings">
     <h1 class="green">{{ msg }}</h1>
+    <h2>Count: {{store.count}}</h2>
+    <h2>Users: {{store.users}}</h2>
+    <button @click="increase" >increase</button>
+    <button @click="getusers" >getusers</button>
+
     <h3>
       You’ve successfully created a project with
       <a target="_blank" href="https://vitejs.dev/">Vite</a> +

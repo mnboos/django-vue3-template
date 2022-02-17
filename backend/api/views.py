@@ -5,9 +5,29 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import permissions, viewsets, status
+from rest_framework import permissions, viewsets, status, mixins
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
+
+
+# @permission_classes((permissions.IsAdminUser, IsOwner,))
+# @permission_classes((permissions.IsAuthenticated))
+from api.models import User
+from api.serializers import UserSerializer
+
+
+@permission_classes((permissions.AllowAny,))
+class UserViewSet(
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    # renderer_classes = (JSONRenderer,)
+
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated,)
+
+    serializer_class = UserSerializer
+    queryset = User.objects
 
 
 @api_view(["get"])
