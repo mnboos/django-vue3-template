@@ -40,7 +40,7 @@ export const useAuthStore = defineStore({
         },
         async logout() {
             try {
-                await api.post("auth/logout");
+                await api.post("auth/logout", null, false);
                 this.isAuthenticated = false;
             } catch (err) {
                 console.error(err);

@@ -3,35 +3,54 @@ import { ref } from "vue";
 import { useCounterStore } from "@/stores/counter";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
+import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps<{
     msg: string;
 }>();
 
+class Foobar {
+  readonly authStore = useAuthStore();
+  readonly counterStore = useCounterStore();
+}
+
+const foobar = new Foobar();
+
 const bla = ref(props.msg);
 
-const store = useCounterStore();
+const counterStore = useCounterStore();
 const authStore = useAuthStore();
 
+const router = useRouter();
+const route = useRoute();
+
 const { isAuthenticated } = storeToRefs(authStore);
+const { users } = storeToRefs(counterStore);
 
 function increase() {
-    store.increment();
+    counterStore.increment();
+}
+
+function redirectToLogin() {
+    router.push("login");
 }
 
 function getusers() {
-    store.getUsers();
+    foobar.counterStore.getUsers();
 }
+
 </script>
 
 <template>
     <div class="greetings">
         <h1 class="green">{{ msg }}</h1>
-        <h2>Count: {{ store.count }}</h2>
-        <h2>Users: {{ store.users }}</h2>
+        <h2>Count: {{ counterStore.count }}</h2>
+        <h2>Count: {{ foobar.counterStore.count }}</h2>
+        <h2>Users: {{ users }}</h2>
         <button @click="increase">increase</button>
         <button @click="getusers">getusers</button>
-        <button @click="authStore.logout()">logout</button>
+        <button v-if="isAuthenticated" @click="authStore.logout()">logout</button>
+        <button v-if="!isAuthenticated" @click="redirectToLogin">login</button>
 
         <h3>Authenticated: {{ isAuthenticated }}</h3>
         <h3>
