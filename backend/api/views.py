@@ -16,7 +16,7 @@ from api.models import User
 from api.serializers import UserSerializer
 
 
-@permission_classes((permissions.AllowAny,))
+@permission_classes((permissions.IsAuthenticated,))
 class UserViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
