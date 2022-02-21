@@ -32,11 +32,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useQuasar } from "quasar";
+import { useAuthStore } from "@/stores/auth";
+import { useRouter, useRoute } from "vue-router";
+
+const authStore = useAuthStore();
 
 type VForm = { validate: () => boolean };
 
 const form = ref<VForm | null>(null);
-const email = ref("someone@example.com");
+const email = ref("admin");
 const password = ref("");
 const showPassword = ref(false);
 
@@ -44,6 +48,9 @@ const $q = useQuasar();
 
 interface Props {}
 const props = defineProps<Props>();
+
+const router = useRouter();
+const route = useRoute();
 
 async function login() {
     const success = (await form.value?.validate()) || false;
@@ -58,6 +65,17 @@ async function login() {
             message: "Please enter a valid username/password combination",
             type: "negative",
         });
+    } else {
+        try {
+            await authStore.login(email.value, password.value);
+            $q.notify("Successfully logged in");
+            await router.push("home");
+        } catch (err) {
+            $q.notify({
+                message: "Login failed",
+                type: "negative",
+            });
+        }
     }
 }
 </script>

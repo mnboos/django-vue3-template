@@ -30,10 +30,10 @@ class UserViewSet(
     queryset = User.objects
 
 
-@api_view(["get"])
-def csrf(request):
-    get_token(request)
-    return Response()
+# @api_view(["get"])
+# def csrf(request):
+#     get_token(request)
+#     return Response()
 
 
 @permission_classes((permissions.AllowAny,))

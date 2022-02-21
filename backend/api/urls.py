@@ -17,7 +17,7 @@ urlpatterns = [
     path("", include(router.urls)),
     # path('', views.index, name='index'),
     # path('auth/', views.AuthenticationView),
-    path("csrf/", views.csrf, name="auth"),
+    # path("csrf/", views.csrf, name="auth"),
     # path('auth/login/', views.login, name='auth'),
     # path('auth/logout/', views.logout, name='auth'),
     # path("pipelines/", views.PipelinesView.as_view()),
