@@ -12,4 +12,8 @@ module.exports = {
   env: {
     "vue/setup-compiler-macros": true,
   },
+  rules: {
+    "@typescript-eslint/no-empty-interface": "off",
+    "indent": "off",
+  },
 };
