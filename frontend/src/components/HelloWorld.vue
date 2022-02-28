@@ -45,6 +45,8 @@ function getusers() {
     <div class="greetings">
         <h1 class="green">{{ msg }}</h1>
         <h2>Count: {{ counterStore.count }}</h2>
+        <h2>Count: {{ counterStore.counter }}</h2>
+        <h2>Count: {{ counterStore.users }}</h2>
         <h2>Count: {{ foobar.counterStore.count }}</h2>
         <h2>Users: {{ users }}</h2>
         <button @click="increase">increase</button>
