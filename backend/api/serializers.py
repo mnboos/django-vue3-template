@@ -6,5 +6,8 @@ from api.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = []
-        # fields = ("url", "username", "email", "groups")
+        # exclude = []
+        fields = (
+            "id",
+            "username",
+        )
