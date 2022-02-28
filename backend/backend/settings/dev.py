@@ -78,6 +78,8 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Authentication
 AUTH_USER_MODEL = "api.User"
 
+LOGIN_URL = "login"
+
 SESSION_COOKIE_SAMESITE = None
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = False
