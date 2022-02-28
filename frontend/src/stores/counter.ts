@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import NetworkHelper from "@/utils/networkHelper";
+import { Notify } from 'quasar'
+import { HTTPError } from "ky";
 
 export type User = {
     username: string;
@@ -27,8 +29,15 @@ export const useCounterStore = defineStore({
         },
         async getUsers() {
             const api = new NetworkHelper();
-            const users = await api.get<User[]>("users");
-            users.forEach(u => this.users.push(u));
+            try {
+                const users = await api.get<User[]>("users");
+                users.forEach(u => this.users.push(u));
+            } catch (err) {
+                console.error(err);
+                if (err instanceof HTTPError) {
+                    Notify.create({ message: `HTTP Error: ${err.message}`, type: "negative" });
+                }
+            }
         },
     },
 });
