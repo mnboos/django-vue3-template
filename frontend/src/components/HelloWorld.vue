@@ -4,22 +4,24 @@ import { useCounterStore } from "@/stores/counter";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
+import { useDummyStore } from "@/stores/dummy";
 
 const props = defineProps<{
     msg: string;
 }>();
 
 class Foobar {
-  readonly authStore = useAuthStore();
-  readonly counterStore = useCounterStore();
+    readonly authStore = useAuthStore();
+    readonly counterStore = useCounterStore();
 }
 
 const foobar = new Foobar();
 
-const bla = ref(props.msg);
+const referencedMsgProperty = ref(props.msg);
 
 const counterStore = useCounterStore();
 const authStore = useAuthStore();
+const dummyStore = useDummyStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -39,6 +41,9 @@ function getusers() {
     foobar.counterStore.getUsers();
 }
 
+function undetailedPost() {
+    dummyStore.undetailedPost();
+}
 </script>
 
 <template>
@@ -49,8 +54,11 @@ function getusers() {
         <h2>Count: {{ counterStore.users }}</h2>
         <h2>Count: {{ foobar.counterStore.count }}</h2>
         <h2>Users: {{ users }}</h2>
+        <h3>Referenced Msg Prop: {{ referencedMsgProperty }}</h3>
+        <h3>Route: {{ route.fullPath }}</h3>
         <button @click="increase">increase</button>
         <button @click="getusers">getusers</button>
+        <button @click="undetailedPost">undetailed_post</button>
         <button v-if="isAuthenticated" @click="authStore.logout()">logout</button>
         <button v-if="!isAuthenticated" @click="redirectToLogin">login</button>
 
