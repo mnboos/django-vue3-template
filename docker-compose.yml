@@ -1,0 +1,31 @@
+version: '3'
+services:
+    django:
+        container_name: django
+        entrypoint: daphne -b 0.0.0.0 -p 8000 backend.asgi:application
+        build:
+            context: backend
+            dockerfile: Dockerfile
+        depends_on:
+            -   postgres
+        volumes:
+            - "./backend:/app"  # remove for PROD and copy instead
+        environment:
+            - DJANGO_SETTINGS_MODULE=backend.settings.dev  # change for PROD
+            - DB_HOST=postgres
+            - DB_PORT=5432
+            - DB_USER=postgres
+            - DB_PASSWORD=admin
+    postgres:
+        container_name: postgres
+        image: postgres:14-alpine
+        ports:
+            - "127.0.0.1:5432:5432"  # remove for PROD
+        volumes:
+            - ./pg/data:/var/lib/postgresql/data
+            - ./pg/conf:/etc/postgresql
+            - ./pg/log:/var/log/postgresql
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=admin
+            - TZ=Europe/Zurich
