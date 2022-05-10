@@ -11,10 +11,9 @@ export type State = {
 
 export const useDummyStore = defineStore({
     id: "dummy",
-    state: () =>
-        ({
-            foo: "bar",
-        } as State),
+    state: (): State => ({
+        foo: "bar",
+    }),
     getters: {
         // isAuthenticated: state => state._isAuthenticated,
     },

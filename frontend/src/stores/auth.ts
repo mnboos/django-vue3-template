@@ -10,11 +10,10 @@ export type State = {
 
 export const useAuthStore = defineStore({
     id: "auth",
-    state: () =>
-        ({
-            isAuthenticated: false,
-            user: null,
-        } as State),
+    state: (): State => ({
+        isAuthenticated: false,
+        user: null,
+    }),
     getters: {
         // isAuthenticated: state => state._isAuthenticated,
     },
