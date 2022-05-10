@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 import { useQuasar } from "quasar";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter, useRoute } from "vue-router";
@@ -46,8 +46,16 @@ const showPassword = ref(false);
 
 const $q = useQuasar();
 
-interface Props {}
-const props = defineProps<Props>();
+const props = defineProps({
+    redirectTo: {
+        type: String,
+        default: "/",
+    },
+});
+
+const { redirectTo } = toRefs(props);
+
+console.log("login view props redirect to: ", redirectTo.value);
 
 const router = useRouter();
 const route = useRoute();
@@ -69,8 +77,10 @@ async function login() {
         try {
             await authStore.login(email.value, password.value);
             $q.notify("Successfully logged in");
-            await router.push("home");
+
+            await router.push(redirectTo.value);
         } catch (err) {
+            console.error("Login failed: ", err);
             $q.notify({
                 message: "Login failed",
                 type: "negative",

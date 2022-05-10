@@ -54,34 +54,21 @@ class AuthenticationView(viewsets.ViewSet):
         username = request.data.get("username")
         password = request.data.get("password")
         user = auth.authenticate(request, username=username, password=password)
-        success = False
-        first_login = None
-        username = None
-        if user is not None:
+        if not user:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        else:
             first_login = not user.last_login
             auth.login(request, user)
             username = user.username
-            success = True
-        return JsonResponse(
-            {
-                "success": success,
-                "user": {"username": username},
-                "firstLogin": first_login,
-            }
-        )
+            return Response(
+                {
+                    "user": {"username": username},
+                    "firstLogin": first_login,
+                }
+            )
 
     @action(methods=["post"], url_path="logout", detail=False)
     def logout(self, request):
         if request.user.is_authenticated:
             auth.logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(methods=["get"], url_path="user", detail=False)
-    def user(self, request):
-        # logger.critical("hello world")
-        return JsonResponse(
-            {
-                "isAuthenticated": request.user.is_authenticated,
-                "user": {"username": request.user.username},
-            }
-        )
