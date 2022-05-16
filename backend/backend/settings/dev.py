@@ -100,6 +100,7 @@ CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 REST_SESSION_LOGIN = True
 
 REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "backend.utils.DynamicPagination",
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": [

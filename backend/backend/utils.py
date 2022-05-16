@@ -1,4 +1,5 @@
 from rest_framework import authentication
+from rest_framework.pagination import PageNumberPagination
 
 
 class SessionAuthentication(authentication.SessionAuthentication):
@@ -14,3 +15,8 @@ class SessionAuthentication(authentication.SessionAuthentication):
 
     def authenticate_header(self, request):
         return "Session"
+
+
+class DynamicPagination(PageNumberPagination):
+    page_query_param = "page"
+    page_size_query_param = "pagesize"

@@ -37,7 +37,7 @@ class UserViewSet(
     # permission_classes = (permissions.IsAuthenticated,)
 
     serializer_class = UserSerializer
-    queryset = User.objects
+    queryset = User.objects.all()
 
 
 # @api_view(["get"])
