@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, toRefs } from "vue";
 import { useCounterStore } from "@/stores/counter";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import { useDummyStore } from "@/stores/dummy";
 
-const props = defineProps<{
-    msg: string;
-}>();
-
-class Foobar {
-    readonly authStore = useAuthStore();
-    readonly counterStore = useCounterStore();
+interface Props {
+    msg?: string;
 }
 
-const foobar = new Foobar();
+const props = withDefaults(defineProps<Props>(), { msg: "This is a default value" });
 
-const referencedMsgProperty = ref(props.msg);
+const { msg } = toRefs(props);
 
 const counterStore = useCounterStore();
 const authStore = useAuthStore();
@@ -38,24 +33,25 @@ function redirectToLogin() {
 }
 
 function getusers() {
-    foobar.counterStore.getUsers();
+    counterStore.fetchUsers();
 }
 
 function undetailedPost() {
     dummyStore.undetailedPost();
 }
+
+const tripleCount = computed(() => counterStore.counter * 2);
 </script>
 
 <template>
     <div class="greetings">
         <h1 class="green">{{ msg }}</h1>
-        <h2>Count: {{ counterStore.count }}</h2>
-        <h2>Count: {{ counterStore.counter }}</h2>
-        <h2>Count: {{ counterStore.users }}</h2>
-        <h2>Count: {{ foobar.counterStore.count }}</h2>
-        <h2>Users: {{ users }}</h2>
-        <h3>Referenced Msg Prop: {{ referencedMsgProperty }}</h3>
-        <h3>Route: {{ route.fullPath }}</h3>
+        <div>Count from getter: {{ counterStore.count }}</div>
+        <div>Count from state: {{ counterStore.counter }}</div>
+        <div>Triple count from computed: {{ tripleCount }}</div>
+        <div>Users: {{ users }}</div>
+        <div>Msg Prop: {{ msg }}</div>
+        <div>Route: {{ route.fullPath }}</div>
         <button @click="increase">increase</button>
         <button @click="getusers">getusers</button>
         <button @click="undetailedPost">undetailed_post</button>
@@ -63,11 +59,6 @@ function undetailedPost() {
         <button v-if="!isAuthenticated" @click="redirectToLogin">login</button>
 
         <h3>Authenticated: {{ isAuthenticated }}</h3>
-        <h3>
-            You’ve successfully created a project with
-            <a target="_blank" href="https://vitejs.dev/">Vite</a> +
-            <a target="_blank" href="https://vuejs.org/">Vue 3</a>. What's next?
-        </h3>
     </div>
 </template>
 

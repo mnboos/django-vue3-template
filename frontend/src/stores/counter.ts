@@ -26,7 +26,7 @@ export const useCounterStore = defineStore({
         increment() {
             this.counter++;
         },
-        async getUsers() {
+        async fetchUsers() {
             const api = new NetworkHelper();
             try {
                 const users = await api.get<User[]>("users");
