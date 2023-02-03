@@ -15,7 +15,6 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/backend" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/frontend" />
       <excludeFolder url="file://$MODULE_DIR$/backend/.venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (django-vue3-template)" jdkType="Python SDK" />
