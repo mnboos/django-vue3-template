@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+    django:
+        environment:
+            DJANGO_SETTINGS_MODULE: backend.settings.prod
+            DEBUG: ${DEBUG}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.django-vue-template-backend.rule=Host(`example.com`) && (PathPrefix(`/api`) || PathPrefix(`/admin`))"
+            - "traefik.http.routers.django-vue-template-backend.entrypoints=https"
+            - "traefik.http.routers.django-vue-template-backend.middlewares=compression@file"
+            - "traefik.http.routers.django-vue-template-backend.tls=true"
+            - "traefik.http.services.django-vue-template-backend.loadbalancer.server.scheme=http"
+            - "traefik.http.services.django-vue-template-backend.loadbalancer.server.port=8000"
+    nginx:
+        build:
+            args:
+                STATIC_ROOT: "/"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.django-vue-template-frontend.rule=Host(`example.com`) && !(PathPrefix(`/api`) || PathPrefix(`/admin`))"
+            - "traefik.http.routers.django-vue-template-frontend.entrypoints=https"
+            - "traefik.http.routers.django-vue-template-frontend.middlewares=compression@file"
+            - "traefik.http.routers.django-vue-template-frontend.tls=true"
+            - "traefik.http.services.django-vue-template-frontend.loadbalancer.server.scheme=http"
+            - "traefik.http.services.django-vue-template-frontend.loadbalancer.server.port=80"

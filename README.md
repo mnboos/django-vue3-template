@@ -3,29 +3,32 @@
 ## Installation
 
 ### Backend
+
 - Install and configure [Poetry](https://python-poetry.org/)
 
 ```bash
 pip install --user poetry
+
+# you may have to add the install folder `%appdata%\Python\Python310\Scripts` to your PATH environment variable (on windows)
 ```
 
 See [Installation](https://python-poetry.org/docs/#installation) for the official guide.
 
-- Install the dependencies using 
+- Install the dependencies
 
 ```bash
 cd backend
 
-# Configure poetry to create a local venv directory
-poetry config virtualenvs.in-project true
-
 poetry install
+
+# Then install the pre-commit hooks
+pre-commit install
 ```
 
-- If you are using a new database or one that has never been migrate, just migrate it using the following Django management command:
+- Initialize the database
 
 ```bash
-python manage.py makemigrations
+python manage.py migrate
 ```
 
 ### Frontend
@@ -38,22 +41,29 @@ npm install
 ```
 
 ## Development
+
 ### Backend
+
 #### Dev server
+
 The dev server can be started with the following command:
+
 ```shell
 python manage.py runserver
 ```
 
 #### CORS and CSRF
+
 CORS and CSRF are preconfigured and should work out of the box.
 
 #### Code Style
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
 ### Frontend
+
 The dev server can be started with the following command:
+
 ```shell
 npm run dev
 ```

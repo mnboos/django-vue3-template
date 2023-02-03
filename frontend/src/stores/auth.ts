@@ -22,7 +22,7 @@ export const useAuthStore = defineStore({
     actions: {
         async login(username: string, password: string) {
             try {
-                const res = await api.postSafe<{ success: boolean; user: { username: string } }>("auth/login", {
+                const res = await api.postSafe<{ user: { username: string }; firstLogin: boolean }>("auth/login", {
                     username,
                     password,
                 });
@@ -36,8 +36,8 @@ export const useAuthStore = defineStore({
                 }
             } catch (err) {
                 this.isAuthenticated = false;
-                throw err;
             }
+            return this.isAuthenticated;
         },
         async logout() {
             try {
@@ -54,7 +54,7 @@ export const useAuthStore = defineStore({
          */
         async getCurrentUser() {
             try {
-                this.user = await api.get("users/current");
+                this.user = await api.get("users/current", null, { timeout: 2000 });
                 this.isAuthenticated = true;
             } catch (err) {
                 this.isAuthenticated = false;

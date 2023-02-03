@@ -1,31 +1,44 @@
-version: '3'
+version: "3.9"
 services:
     django:
-        container_name: django
-        entrypoint: daphne -b 0.0.0.0 -p 8000 backend.asgi:application
+        entrypoint: gunicorn --bind 0.0.0.0:8000 --capture-output --log-level info --log-file - backend.wsgi
+        restart: unless-stopped
         build:
             context: backend
             dockerfile: Dockerfile
         depends_on:
-            -   postgres
-        volumes:
-            - "./backend:/app"  # remove for PROD and copy instead
+            -   db
         environment:
-            - DJANGO_SETTINGS_MODULE=backend.settings.dev  # change for PROD
-            - DB_HOST=postgres
-            - DB_PORT=5432
-            - DB_USER=postgres
-            - DB_PASSWORD=admin
-    postgres:
-        container_name: postgres
-        image: postgres:14-alpine
+            - DJANGO_SETTINGS_MODULE=backend.settings.dev # change for PROD
+            - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+            - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+            - SESSION_COOKIE_INSECURE=${SESSION_COOKIE_INSECURE}
+            - CSRF_COOKIE_INSECURE=${CSRF_COOKIE_INSECURE}
+            - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+            - TZ=${TZ}
+            - DB_NAME=${DB_NAME}
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+    nginx:
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: nginx/Dockerfile
+            network: host
+    db:
+        image: postgres:15
+        restart: unless-stopped
         ports:
-            - "127.0.0.1:5432:5432"  # remove for PROD
+            - "127.0.0.1:5432:5432"
         volumes:
-            - ./pg/data:/var/lib/postgresql/data
-            - ./pg/conf:/etc/postgresql
-            - ./pg/log:/var/log/postgresql
+            - ./db/data:/var/lib/postgresql/data
+            - ./db/conf:/etc/postgresql
+            - ./db/log:/var/log/postgresql
         environment:
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=admin
-            - TZ=Europe/Zurich
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - TZ=${TZ}
+

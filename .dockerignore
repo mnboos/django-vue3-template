@@ -1,0 +1,6 @@
+.git
+.github
+**/.idea
+backend/.venv
+frontend/node_modules
+**/__pycache__

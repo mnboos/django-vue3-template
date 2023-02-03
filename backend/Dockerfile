@@ -1,23 +1,21 @@
 # -----------------------------------------------------
-FROM python:3.9 as requirements_builder
+FROM python:3.10 as requirements_builder
 WORKDIR /app
 RUN pip install --no-cache-dir poetry
-COPY poetry.lock pyproject.toml ./
-RUN poetry export --without-hashes -f requirements.txt -o requirements.txt
-RUN poetry export --without-hashes --dev -f requirements.txt -o requirements_dev.txt
-
-# Update requirements_dev.txt to contain ONLY dev (not prod+dev)
-RUN grep -Fxvf requirements.txt requirements_dev.txt > requirements_dev_new.txt && mv requirements_dev_new.txt requirements_dev.txt
+COPY poetry.* pyproject.toml ./
+RUN poetry export --without-hashes --without dev --format requirements.txt --output requirements.txt
 # -----------------------------------------------------
 
-
 # -----------------------------------------------------
-FROM python:3.9
+FROM python:3.10
 WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1
+
+RUN pip install --no-cache-dir gunicorn
 COPY --from=requirements_builder /app/requirements*.txt ./
-
 RUN pip install --no-cache-dir -r requirements.txt
-
 COPY . .
+RUN DJANGO_SETTINGS_MODULE=backend.settings.dev python manage.py collectstatic --noinput
 
 ENV DJANGO_SETTINGS_MODULE=backend.settings.prod

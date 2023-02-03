@@ -1,0 +1,15 @@
+-   model: api.user
+    pk: 1
+    fields:
+        password: pbkdf2_sha256$320000$zgS26OltkEzuccmlyFEdMQ$h3nAicIRa6ny6bUZsE7S1x0Pg7cnaTXcgauE2ROQN1M=
+        last_login: 2022-04-11 13:15:37.450550+00:00
+        is_superuser: true
+        username: admin
+        first_name: ''
+        last_name: ''
+        email: ''
+        is_staff: true
+        is_active: true
+        date_joined: 2022-04-08 04:47:02.752799+00:00
+        groups: []
+        user_permissions: []

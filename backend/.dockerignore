@@ -1,0 +1,7 @@
+.idea
+.pytest_cache
+.venv
+__pycache__
+htmlcov
+tmp
+**/db.sqlite3

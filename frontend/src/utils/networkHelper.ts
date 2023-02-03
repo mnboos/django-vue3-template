@@ -5,7 +5,9 @@ import _ from "lodash";
 
 export default class NetworkHelper {
     private API =
-        import.meta.env.MODE === "production" ? "/api/" : `http://${window.location.host.split(":")[0]}:8000/api/`;
+        import.meta.env.MODE === "production"
+            ? `${import.meta.env.VITE_BASE_PATH || ""}/api/`.replace("//", "/")
+            : `http://${window.location.host.split(":")[0]}:8000/api/`;
 
     private getOptionsAndUrl(url: string, queryParams: object | null) {
         const options = {
@@ -49,7 +51,7 @@ export default class NetworkHelper {
         return cookieValue;
     }
 
-    private static async handleError(err: object) {
+    public static async handleError(err: object) {
         if (err instanceof HTTPError) {
             if (err.response.status === 409) {
                 const { error, detail } = await err.response.json();
@@ -75,9 +77,26 @@ export default class NetworkHelper {
         }
     }
 
-    async get<T>(url: string, queryParams: object | null = null): Promise<T> {
+    async get<T>(
+        url: string,
+        queryParams: object | null = null,
+        requestOptions: Partial<Options> | null = null
+    ): Promise<T> {
         const { options, fullUrl } = this.getOptionsAndUrl(url, queryParams);
-        return (await ky.get(fullUrl, options)).json();
+        return (await ky.get(fullUrl, { ...options, ...requestOptions })).json();
+    }
+
+    async head(url: string): Promise<void> {
+        const { options, fullUrl } = this.getOptionsAndUrl(url, null);
+        await ky.head(fullUrl, options);
+    }
+
+    async headSafe(url: string): Promise<void> {
+        try {
+            return await this.head(url);
+        } catch (err) {
+            await NetworkHelper.handleError(err as object);
+        }
     }
 
     async patchSafe<T>(url: string, data: object): Promise<T | null> {
@@ -97,7 +116,7 @@ export default class NetworkHelper {
         return (await ky.patch(fullUrl, options)).json();
     }
 
-    async postSafe<T>(url: string, data: object | null = null): Promise<T | null> {
+    async postSafe<T>(url: string, data?: unknown): Promise<T | null> {
         try {
             return await this.post(url, data);
         } catch (err) {
@@ -106,7 +125,7 @@ export default class NetworkHelper {
         }
     }
 
-    async post<T>(url: string, data: object | null = null): Promise<T | null> {
+    async post<T>(url: string, data?: unknown): Promise<T | null> {
         const { options, fullUrl } = this.getOptionsAndUrl(url, null);
         if (data instanceof FormData) {
             options.body = data;
@@ -135,6 +154,23 @@ export default class NetworkHelper {
     async deleteSafe(url: string) {
         try {
             return await this.delete(url);
+        } catch (err) {
+            await NetworkHelper.handleError(err as object);
+            return null;
+        }
+    }
+
+    async put<T>(url: string, data: T): Promise<T> {
+        const { options, fullUrl } = this.getOptionsAndUrl(url, null);
+        if (data) {
+            options.json = data;
+        }
+        return (await ky.put(fullUrl, options)).json();
+    }
+
+    async putSafe<T>(url: string, data: T): Promise<T | null> {
+        try {
+            return await this.put(url, data);
         } catch (err) {
             await NetworkHelper.handleError(err as object);
             return null;

@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "es2018",
+        "lib": ["es2018", "DOM"],
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "types": ["codeceptjs", "node", "./typing/steps"]
+    }
+}

@@ -1,34 +1,25 @@
 from django.contrib import auth
-from django.http import JsonResponse
-from django.middleware.csrf import get_token
-from django.shortcuts import render
-
-# Create your views here.
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import permissions, viewsets, status, mixins
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework import viewsets, mixins, permissions, status
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from .models import User
+from .serializers import (
 
-# @permission_classes((permissions.IsAdminUser, IsOwner,))
-# @permission_classes((permissions.IsAuthenticated))
-from api.models import User
-from api.serializers import UserSerializer
+    UserSerializer, GroupSerializer,
+)
+from loguru import logger
 
-
-@permission_classes((permissions.IsAuthenticated,))
-class DummyViewSet(
-    viewsets.GenericViewSet,
-):
-    @action(detail=False, methods=["post"])
-    def undetailed_post(self, request: Request):
-        return Response(status=status.HTTP_204_NO_CONTENT)
+# Create your views here.
+from api.utils import require_param
 
 
 @permission_classes((permissions.IsAuthenticated,))
 class UserViewSet(
     mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
     # renderer_classes = (JSONRenderer,)
@@ -39,11 +30,26 @@ class UserViewSet(
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
+    @action(methods=["get"], detail=False, permission_classes=[permissions.IsAdminUser])
+    def admins(self, request: Request):
+        return Response({"youdidit": True})
 
-# @api_view(["get"])
-# def csrf(request):
-#     get_token(request)
-#     return Response()
+    @action(methods=["get"], detail=False)
+    def current(self, request):
+        return Response(
+            {
+                "username": request.user.username,
+            }
+        )
+
+#
+# @permission_classes((permissions.IsAuthenticated,))
+# class GroupViewSet(    mixins.ListModelMixin,
+#     mixins.RetrieveModelMixin,
+#     viewsets.GenericViewSet,):
+#
+#     serializer_class = GroupSerializer
+#     queryset = Group.ob
 
 
 @permission_classes((permissions.AllowAny,))

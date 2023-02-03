@@ -1,6 +1,8 @@
+secrets/*
+htmlcov
 celerybeat.pid
 celery.sqlite
-
+db.sqlite3
 *.pyc
 *.zip
 *.iso

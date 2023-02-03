@@ -1,0 +1,19 @@
+{
+    "ts-node": {
+        "files": true
+    },
+    //    "exclude": ["node_modules"],
+    //    "include": ["steps.d.ts", "tests/*_test.ts"],
+    "compilerOptions": {
+        "composite": true,
+        "target": "es2018",
+        "lib": ["es2018", "DOM"],
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "types": ["codeceptjs", "codecept", "node"]
+    }
+}
