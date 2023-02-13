@@ -30,7 +30,7 @@ if session_cookie_insecure:
     logger.warning("SESSION_COOKIE_INSECURE enabled!")
 
 CSRF_COOKIE_SAMESITE = "Lax"
-csrf_cookie_insecure = "CSRF_COOKIE_INSECURE" in os.environ
+csrf_cookie_insecure = os.environ.get("CSRF_COOKIE_INSECURE", "False") == "True"
 CSRF_COOKIE_SECURE = True and not csrf_cookie_insecure
 if csrf_cookie_insecure:
     logger.warning("CSRF_COOKIE_INSECURE enabled!")
