@@ -7,9 +7,9 @@ services:
             context: backend
             dockerfile: Dockerfile
         depends_on:
-            -   db
+            -   pgbouncer
         environment:
-            - DJANGO_SETTINGS_MODULE=backend.settings.dev # change for PROD
+            - DJANGO_SETTINGS_MODULE=backend.settings.dev
             - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
             - ALLOWED_HOSTS=${ALLOWED_HOSTS}
             - SESSION_COOKIE_INSECURE=${SESSION_COOKIE_INSECURE}
@@ -17,7 +17,7 @@ services:
             - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
             - TZ=${TZ}
             - DB_NAME=${DB_NAME}
-            - DB_HOST=${DB_HOST}
+            - DB_HOST=pgbouncer
             - DB_PORT=${DB_PORT}
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
@@ -30,8 +30,6 @@ services:
     db:
         image: postgres:15
         restart: unless-stopped
-        ports:
-            - "127.0.0.1:5432:5432"
         volumes:
             - ./db/data:/var/lib/postgresql/data
             - ./db/conf:/etc/postgresql
@@ -41,4 +39,22 @@ services:
             - POSTGRES_USER=${DB_USER}
             - POSTGRES_PASSWORD=${DB_PASSWORD}
             - TZ=${TZ}
-
+    pgbouncer:
+        restart: unless-stopped
+        build:
+            context: pgbouncer
+            dockerfile: Dockerfile
+            args:
+                VERSION: "1.18.0"
+        depends_on:
+            -   db
+        ports:
+            - "127.0.0.1:${DB_PORT}:5432"
+        environment:
+            - DATABASE_URL=
+            - AUTH_TYPE=plain
+            - DB_HOST=db
+            - DB_PORT=5432
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
