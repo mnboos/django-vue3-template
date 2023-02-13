@@ -4,7 +4,8 @@ from loguru import logger
 # noinspection PyUnresolvedReferences
 from .dev import *
 
-DEBUG = bool(os.environ.get("DEBUG", False))
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+logger.info("DEBUG = {}", DEBUG)
 DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 if DEBUG:
     logger.warning("DEBUG enabled!")
