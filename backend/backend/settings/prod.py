@@ -24,13 +24,4 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 logger.info(f"CORS_ALLOWED_ORIGINS: {','.join(CORS_ALLOWED_ORIGINS)}")
 
 SESSION_COOKIE_SAMESITE = "Lax"
-session_cookie_insecure = "SESSION_COOKIE_INSECURE" in os.environ
-SESSION_COOKIE_SECURE = True and not session_cookie_insecure
-if session_cookie_insecure:
-    logger.warning("SESSION_COOKIE_INSECURE enabled!")
-
 CSRF_COOKIE_SAMESITE = "Lax"
-csrf_cookie_insecure = os.environ.get("CSRF_COOKIE_INSECURE", "False") == "True"
-CSRF_COOKIE_SECURE = True and not csrf_cookie_insecure
-if csrf_cookie_insecure:
-    logger.warning("CSRF_COOKIE_INSECURE enabled!")
