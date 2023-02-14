@@ -11,12 +11,40 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from loguru import logger
+from dotenv import load_dotenv
 from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def load_vars():
+    vars_before = {**os.environ}
+    env_file = os.environ.get("ENV_FILE")
+    if env_file:
+        env_file_path = Path(env_file)
+        if not env_file_path.exists():
+            raise RuntimeError(f"dotenv file not found: {env_file}")
+        if not env_file_path.is_file():
+            raise RuntimeError(f"dotenv file is not a file: {env_file}")
+
+        load_dotenv(env_file_path)
+
+        if os.environ.get("ENV_FILE_LOG_CHANGES", "False") == "True":
+            vars_set = list([v for v in os.environ.keys() if v not in vars_before])
+            vars_changed = list([v for v in os.environ.keys() if v in vars_before and os.environ[v] != vars_before[v]])
+            for variable in sorted(os.environ.keys()):
+                if variable in vars_set or vars_changed:
+                    val = os.environ[variable]
+                    if val and any(exclude in variable for exclude in ["SECRET", "PASSWORD"]):
+                        val = "*******"
+                    logger.info("{}={}", variable, val)
+
+
+load_vars()
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
